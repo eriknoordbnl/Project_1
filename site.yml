@@ -1,0 +1,22 @@
+---
+
+- hosts: all
+  become: true
+  pre-tasks:
+
+  - name: update repository index
+    tags: always
+    apt:
+      update_cache: yes
+    changed_when: false
+    when: ansible_distribution == "Debian"
+
+- hosts: all
+  become: true
+  roles:
+    - base
+
+- hosts: domo
+  become: true
+  roles:
+    - domo_servers
