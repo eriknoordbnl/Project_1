@@ -1,0 +1,8 @@
+Dir_name:
+- ansible
+- backup
+- files
+- scripts
+- temp
+- wireguard
+tree_path: "/home/$USER"

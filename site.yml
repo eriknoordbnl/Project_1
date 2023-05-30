@@ -2,7 +2,7 @@
 
 - hosts: all
   become: true
-  pre-tasks:
+  pre_tasks:
 
   - name: update repository index
     tags: always
