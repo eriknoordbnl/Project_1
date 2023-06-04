@@ -1,0 +1,80 @@
+# Unattended upgrades
+- name: Install unattended upgrades package.
+  apt:
+    name: unattended-upgrades
+    state: latest
+    update-cache: yes
+- block:
+    - name: Get Properties Unattended-upgrades
+      stat:
+        path: ~/files/unattended-upgrades
+        checksum_algorithm: sha1
+      register: src_info
+    - name: Copy Unattended source to destination
+      copy:
+        src: ~/files/50unattended-upgrades
+        dest: /etc/apt/apt.conf.d/50unattended-upgrades
+        force: yes
+        backup: yes
+        checksum:
+      register: copy_out
+
+# UFW
+- name : Install UFW
+  apt:
+    name: ufw
+    state: latest
+    update_cache: yes
+  register: ufw
+- name: Flush UFW
+  ufw:
+    state: reset
+  when: ufw.changed
+- name: Add Standard Policy
+  ufw:
+    direction: "{{ item.direction }}"
+    default: "{{ item.default }}"
+  with_items:
+    - { direction: "incoming", default: "deny" }
+    - { direction: "outgoing", default: "allow" }
+- name: Add UFW rules with direction
+  ufw:
+    rule: "{{ item.rule }}"
+    direction: "{{ item.dir }}"
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+    comment: "{{ item.com }}"
+  with_items:
+    - { rule: limit, dir: in, port: 22, proto: tcp, com: "SSH in" }
+    - { rule: allow, dir: out, port: 22, proto: tcp, com: "SSH out" }
+- name: Add UFW rules without direction
+  ufw:
+    rule: "{{ item.rule }}"
+    port: "{{ item.port }}"
+    proto: "{{ item.proto }}"
+    comment: "{{ item.com }}"
+  with_items:
+    - { rule: allow, port: 80, proto: tcp, com: "HTTP" }
+    - { rule: allow, port: 443, proto: tcp, com: "HTTPS" }
+    - { rule: allow, port: 53, proto: udp, com: "DNS" }
+    - { rule: allow, port: 50499, proto: udp, com: "Wireguard VPN" }
+#    - { rule: allow, port: 8080, proto: tcp, com: "DOMOTICZ" } when $SERVER = DOMO
+- name: Enable UFW
+  ufw:
+    state: "enabled"
+    logging: "on"
+
+# Secure SSH
+- name: Update SSH configuration to be more secure
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^(#)?{{ item.regexp }}"
+    line: "{{ item.line }}"
+    backup: yes
+    state: present
+  with_items:
+    - { regexp: "PasswordAuthentication", line: "PasswordAuthentication no" }
+    - { regexp: "PermitRootLogin", line: "PermitRootLogin no" }
+    - { regexp: "Port", line: "Port 22" }
+    - { regexp: "PermitEmptyPasswords", line: "PermitEmptyPasswords no" }
+  notify: restart sshd

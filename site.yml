@@ -16,7 +16,7 @@
   roles:
     - base
 
-- hosts: domo
+- hosts: all
   become: true
   roles:
-    - domo_servers
+    - secure

@@ -1,106 +1,13 @@
-- name : add ssh key for pi_user
+- name : add ssh key for ansible
   authorized_key:
-    user: pi_user
+    user: ansible
     key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOJY7+v8Un9/DE9eRJxczPaW5FVLkQFaYxCwQwYa7QKD LINUX 
 
 - name : install packages
   apt:
-    name: 
-      - nano
-      - ufw
-      - fail2ban
-      - apticron
-      - logwatch
-      - unattended-upgrades
-      - apt-listchanges
+    name: "{{ item }}"
     state: latest
-
-# Install ufw
-- name : ufw
-  apt:
-    name: ufw
-    state: latest
-    update_cache: yes
-  register: ufw
-# Flush ufw
-- name: Reset UFW
-  ufw:
-    state: reset
-  when: ufw.changed
-# Standard Policy
-- name: Allow outgoing
-  ufw:
-    default: allow
-    direction: outgoing
-- name: Deny incoming
-  ufw:
-    default: deny
-    direction: incoming
-# SSH access
-- name: Grant ssh access
-  ufw:
-    rule: limit
-    direction: in
-    port: '22'
-    proto: tcp
-    comment: "SSH in"
-- name: Allow outbound ssh
-  ufw:
-    rule: allow
-    direction: out
-    port: '22'
-    proto: tcp
-    comment: "SSH out"
-#       from_ip: 192.168.1.0/24
-# Allow http
-- name: ufw rules
-  community.general.ufw:
-    rule: "allow"
-    port: '80'
-    proto: tcp
-    comment: "HTTP"
-# Allow https
-- name: ufw rules
-  community.general.ufw:
-    rule: "allow"
-    port: '443'
-    proto: tcp
-    comment: "HTTPS"
-# Allow DNS
-- name: Allow DNS traffic
-  ufw:
-    rule: allow
-    port: '53'
-    proto: udp
-    comment: "DNS"
-# Allow Gravana
-#    - name: Allow Grafana traffic
-#      ufw:
-#        rule: allow
-#        port: '3030'
-#        proto: tcp
-#        comment: "Grafana"
-# Allow Wireguard VPN
-- name: Allow Wireguard
-  ufw:
-    rule: allow
-    port: '50499'
-    proto: udp
-    comment: "Wireguard"
-# Allow Domoticz
-- name: Allow Domoticz
-  ufw:
-    rule: allow
-    port: '8080'
-    proto: tcp
-    comment: "Domoticz"
-
-# Enable firewall
-- name: Enable ufw
-  community.general.ufw:
-    state: "enabled"
-    logging: "on"
-
+  with_items: "{{ Package_name }}"   
 - name: Create Directory structure with permission
   file:
     path: "{{ tree_path }}/{{ item }}"

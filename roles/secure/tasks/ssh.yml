@@ -1,0 +1,20 @@
+- hosts: TEST
+  become: yes
+  tasks:
+  - name: Update SSH configuration to be more secure.
+    lineinfile:
+      path: /etc/ssh/sshd_config
+      regexp: "^(#)?{{ item.regexp }}"
+      line: "{{ item.line }}"
+      backup: yes
+      state: present
+    with_items:
+         - { regexp: "PasswordAuthentication", line: "PasswordAuthentication no" }
+         - { regexp: "PermitRootLogin", line: "PermitRootLogin no" }
+         - { regexp: "Port", line: "Port 22" }
+         - { regexp: "PermitEmptyPasswords", line: "PermitEmptyPasswords no" }
+    notify: restart ssh
+
+  handlers:
+  - name: restart ssh
+    service: name=ssh state=restarted

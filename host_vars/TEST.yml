@@ -7,9 +7,6 @@ Dir_name:
 - temp
 - wireguard
 tree_path: "/home/$USER"
-# Unattended upgrades
-src_unattend: "~/files/50unattended-upgrades"
-dest_unattend: "/etc/apt/apt.conf.d/50unattended-upgrades"
 # Package install
 Package_name:
 - nano
@@ -19,3 +16,6 @@ Package_name:
 - logwatch
 - unattended-upgrades
 - apt-listchanges
+# Unattended upgrades
+src_unattend: "~/files/50unattended-upgrades"
+dest_unattend: "/etc/apt/apt.conf.d/50unattended-upgrades"

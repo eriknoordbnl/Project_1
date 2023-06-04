@@ -1,0 +1,25 @@
+---
+- hosts: all
+  become: true
+  tasks:
+
+  - name: create user ansible
+    tags: always
+    user:
+      name: ansible
+      groups: root
+
+  - name: add ssh key for ansible
+    tags: always
+    authorized_key:
+      user: ansible
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOJY7+v8Un9/DE9eRJxczPaW5FVLkQFaYxCwQwYa7QKD LINUX" 
+
+  - name: add sudoers file for ansible
+    tags: always
+    copy:
+      src: ~/ansible/Project_1/files/sudo_ansible
+      dest: /etc/sudoers.d/ansible
+      owner: root
+      group: root
+      mode: 440
