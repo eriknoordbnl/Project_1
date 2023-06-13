@@ -19,3 +19,4 @@ Package_name:
 - logwatch
 - unattended-upgrades
 - apt-listchanges
+# Crontab setting (update / backup domoticz data)

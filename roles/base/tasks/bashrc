@@ -1,0 +1,15 @@
+---
+- name: bashrc copy to hosts
+  hosts: TEST
+  tasks:
+    - name: Copy baschrc
+      copy:
+        src: ~/.bashrc
+        dest: ~/.bashrc
+        backup: yes
+    - name: run source function
+      shell: . ~/.bashrc
+      register: func_result
+    - name: check result
+      debug:
+        var: func_result.stdout

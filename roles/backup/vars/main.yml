@@ -1,0 +1,12 @@
+# Variables for the role Backup
+source_path: "/home/pi_user/scripts"
+destination_path: "/home/pi_user/scripts"
+Script_name:
+- update.sh
+- backup_daily.sh
+- backup_weekly.sh
+- backup_monthly.sh
+- error.sh
+Touch_name:
+- backup.log
+- error.log

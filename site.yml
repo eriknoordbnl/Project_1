@@ -11,12 +11,12 @@
     changed_when: false
     when: ansible_distribution == "Debian"
 
-- hosts: all
+- hosts: TEST
   become: true
   roles:
     - base
 
-- hosts: all
-  become: true
-  roles:
-    - secure
+#- hosts: all
+#  become: true
+#  roles:
+#    - secure
