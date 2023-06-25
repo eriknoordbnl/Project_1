@@ -2,3 +2,8 @@
   service:
     name: sshd
     state: restarted
+
+- name: restart service fail2ban
+  service:
+    name: fail2ban
+    state: restarted

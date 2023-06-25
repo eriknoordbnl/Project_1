@@ -78,3 +78,30 @@
     - { regexp: "Port", line: "Port 22" }
     - { regexp: "PermitEmptyPasswords", line: "PermitEmptyPasswords no" }
   notify: restart sshd
+
+# Secure with fail2ban
+- name: copy src to dest
+  copy:
+    src: /etc/fail2ban/jail.conf
+    dest: /etc/fail2ban/jail.bak
+- name: Insert lines end of file.
+  lineinfile:
+    path: /etc/fail2ban/jail.bak
+    state: present
+    insertafter: EOF
+    line: " {{ item }} "
+  with_items:
+    - "[ssh]"
+    - enable  = true
+    - port    = ssh
+    - filter  = sshd
+    - "logpath = /var/log/auth.log"
+    - maxretry= 3
+    - bantime = -1
+- name: add ip adresses to ignore ip
+  lineinfile:
+    path: /etc/fail2ban/jail.bak
+    regexp: "#ignoreip = *"
+    line: "ignoreip = 127.0.0.1/8,192.168.1.0/24,10.6.0.0/16"
+    state: present
+  notify: restart service fail2ban
