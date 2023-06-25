@@ -1,0 +1,36 @@
+---
+- hosts: all
+  become: true
+  tasks:
+
+  - name: bashrc for {{ ansible_user }}
+    blockinfile:
+      path: "/home/{{ ansible_user }}/.bashrc"
+      block: |  
+        alias ll='ls -la'
+        alias c='clear'
+        alias cds='cd ~/scripts/bash'
+        alias cdb='cd ~/backup'
+        alias cdf='cd ~/files'
+        alias cdm='cd /media'
+        alias cda='cd ~/ansible'
+        alias um='sudo umount /media'
+        alias std='sudo shutdown -h now'
+        alias catf='cat ~/files/backup.log'
+  - name: bashrc for root
+    blockinfile:
+      path: "{{ ansible_user_dir }}/.bashrc"
+      block: |
+        export LS_OPTIONS='--color=auto'
+        eval "`dircolors`"
+        alias ls='ls $LS_OPTIONS'
+        alias ll='ls $LS_OPTIONS -la'
+        alias l='ls $LS_OPTIONS -lA'
+
+        if ! shopt -oq posix; then
+          if [ -f /usr/share/bash-completion/bash_completion ]; then
+            . /usr/share/bash-completion/bash_completion
+          elif [ -f /etc/bash_completion ]; then
+            . /etc/bash_completion
+          fi
+        fi

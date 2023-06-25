@@ -1,6 +1,6 @@
 ---
 
-- hosts: all
+- hosts: TEST
   become: true
   pre_tasks:
 
@@ -16,7 +16,7 @@
   roles:
     - base
 
-#- hosts: all
-#  become: true
-#  roles:
-#    - secure
+- hosts: TEST
+  become: true
+  roles:
+    - secure
