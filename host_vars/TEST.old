@@ -7,16 +7,15 @@ Dir_name:
 - temp
 - wireguard
 tree_path: "/home/$USER"
-# Unattended upgrades
-src_unattend: "~/files/50unattended-upgrades"
-dest_unattend: "/etc/apt/apt.conf.d/50unattended-upgrades"
 # Package install
 Package_name:
 - nano
 - ufw
+- fail2ban
 - apticron
+- logwatch
 - unattended-upgrades
 - apt-listchanges
-#- fail2ban
-#- logwatch
-# Crontab setting (update / backup domoticz data)
+# Unattended upgrades
+src_unattend: "~/files/50unattended-upgrades"
+dest_unattend: "/etc/apt/apt.conf.d/50unattended-upgrades"

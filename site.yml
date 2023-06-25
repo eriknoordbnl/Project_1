@@ -15,8 +15,8 @@
   become: true
   roles:
     - base
+    - secure
 
 - hosts: TEST
-  become: true
   roles:
-    - secure
+    - basic

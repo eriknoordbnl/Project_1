@@ -12,7 +12,7 @@
       register: src_info
     - name: Copy Unattended source to destination
       copy:
-        src: ~/files/50unattended-upgrades
+        src: ~/ansible/Project_1/roles/secure/files/50unattended-upgrades        
         dest: /etc/apt/apt.conf.d/50unattended-upgrades
         force: yes
         backup: yes

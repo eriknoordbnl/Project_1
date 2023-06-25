@@ -8,21 +8,3 @@
     name: "{{ item }}"
     state: latest
   with_items: "{{ Package_name }}"   
-- name: Create Directory structure with permission
-  file:
-    path: "{{ tree_path }}/{{ item }}"
-    mode: "0755"
-    state: directory
-  with_items: "{{ Dir_name }}"
-
-- name: Copy baschrc
-  copy:
-    src: ~/ansible/Project_1/roles/base/files/.bashrc
-    dest: ~/.bashrc
-    backup: yes
-- name: run source function
-  shell: . ~/.bashrc
-  register: func_result
-- name: check result
-  debug:
-    var: func_result.stdout
