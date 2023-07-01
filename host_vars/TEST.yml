@@ -17,6 +17,6 @@ Package_name:
 - apticron
 - unattended-upgrades
 - apt-listchanges
-#- fail2ban
-#- logwatch
+- fail2ban
+- logwatch
 # Crontab setting (update / backup domoticz data)

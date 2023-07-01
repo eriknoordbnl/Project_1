@@ -3,6 +3,20 @@
   become: true
   tasks:
 
+  - name: Update dhcpcd configuration
+    lineinfile:
+      path: /etc/dhcpcd.conf
+      regexp: "^(#)?{{ item.regexp }}"
+      line: "{{ item.line }}"
+      backup: yes
+      state: present
+    with_items:
+      - { regexp: "interface eth0", line: "interface eth0" }
+      - { regexp: "static ip_address=192.168.1.23/24", line: "static ip_address=192.168.1.23/24" }
+      - { regexp: "static routers=192.168.1.1", line: "static routers=192.168.1.254" }
+      - { regexp: "static domain_name_servers=192.168.1.1", line: "static domain_name_servers=1.1.1.1" }
+    notify: restart dhcpcd
+
   - name: Update apt repo and cache on all Debian/Ubuntu boxes
     apt:
       update_cache=yes
@@ -48,3 +62,9 @@
       owner: root
       group: root
       mode: 440
+  
+  handlers:
+  - name: restart dhcpcd
+    service:
+      name: dhcpcd
+      state: restarted
