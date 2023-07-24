@@ -1,0 +1,30 @@
+---
+- name: Install fail2ban (Debian).
+  package:
+    name: fail2ban
+    state: present
+  when: ansible_os_family == 'Debian'
+
+- name: update configuration file - /etc/fail2ban/fail2ban.local
+  template:
+    src: "{{ fail2ban_configuration_template }}"
+    dest: /etc/fail2ban/fail2ban.local
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart fail2ban
+
+- name: Copy fail2ban custom configuration file into place.
+  template:
+    src: "{{ fail2ban_jail_template }}"
+    dest: /etc/fail2ban/jail.local
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart fail2ban
+
+- name: Ensure fail2ban is running and enabled on boot.
+  service:
+    name: fail2ban
+    state: started
+    enabled: true

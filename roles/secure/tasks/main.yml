@@ -26,10 +26,12 @@
     state: latest
     update_cache: yes
   register: ufw
+
 - name: Flush UFW
   ufw:
     state: reset
   when: ufw.changed
+
 - name: Add Standard Policy
   ufw:
     direction: "{{ item.direction }}"
@@ -45,8 +47,8 @@
     proto: "{{ item.proto }}"
     comment: "{{ item.com }}"
   with_items:
-    - { rule: limit, dir: in, port: 22, proto: tcp, com: "SSH in" }
-    - { rule: allow, dir: out, port: 22, proto: tcp, com: "SSH out" }
+    - { rule: limit, dir: in, port: "{{ ssh_port }}", proto: tcp, com: "SSH in" }
+    - { rule: allow, dir: out, port: "{{ ssh_port }}", proto: tcp, com: "SSH out" }
 - name: Add UFW rules without direction
   ufw:
     rule: "{{ item.rule }}"
@@ -54,12 +56,12 @@
     proto: "{{ item.proto }}"
     comment: "{{ item.com }}"
   with_items:
-    - { rule: allow, port: 80, proto: tcp, com: "HTTP" }
-    - { rule: allow, port: 443, proto: tcp, com: "HTTPS" }
-    - { rule: allow, port: 53, proto: udp, com: "DNS" }
-    - { rule: allow, port: 50499, proto: udp, com: "Wireguard VPN" }
-#    - { rule: allow, port: 8080, proto: tcp, com: "DOMOTICZ" } when $SERVER = DOMO
-- name: Enable UFW
+    - { rule: allow, port: "{{ http_port }}", proto: tcp, com: "HTTP" }
+    - { rule: allow, port: "{{ https_port }}", proto: tcp, com: "HTTPS" }
+    - { rule: allow, port: "{{ dns_port }}", proto: udp, com: "DNS" }
+    - { rule: allow, port: "{{ wireguard_port }}", proto: udp, com: "Wireguard VPN" }
+#    - { rule: allow, port: "{{ domoticz_port }}", proto: tcp, com: "DOMOTICZ" } when $SERVER = DOMO
+- name: Enable UFW and Logging
   ufw:
     state: "enabled"
     logging: "on"
@@ -73,35 +75,9 @@
     backup: yes
     state: present
   with_items:
-    - { regexp: "PasswordAuthentication", line: "PasswordAuthentication no" }
-    - { regexp: "PermitRootLogin", line: "PermitRootLogin no" }
-    - { regexp: "Port", line: "Port 22" }
-    - { regexp: "PermitEmptyPasswords", line: "PermitEmptyPasswords no" }
+    - { regexp: "PasswordAuthentication", line: "{{ PasswordAuthentication }}" }
+    - { regexp: "PermitRootLogin", line: "{{ PermitRootLogin }}" }
+    - { regexp: "Port", line: "{{ Port }}" }
+    - { regexp: "PermitEmptyPasswords", line: "{{ PermitEmptyPasswords }}" }
   notify: restart sshd
 
-# Secure with fail2ban
-- name: copy src to dest
-  copy:
-    src: /etc/fail2ban/jail.conf
-    dest: /etc/fail2ban/jail.bak
-- name: Insert lines end of file.
-  lineinfile:
-    path: /etc/fail2ban/jail.bak
-    state: present
-    insertafter: EOF
-    line: " {{ item }} "
-  with_items:
-    - "[ssh]"
-    - enable  = true
-    - port    = ssh
-    - filter  = sshd
-    - "logpath = /var/log/auth.log"
-    - maxretry= 3
-    - bantime = -1
-- name: add ip adresses to ignore ip
-  lineinfile:
-    path: /etc/fail2ban/jail.bak
-    regexp: "#ignoreip = *"
-    line: "ignoreip = 127.0.0.1/8,192.168.1.0/24,10.6.0.0/16"
-    state: present
-  notify: restart service fail2ban

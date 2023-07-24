@@ -1,6 +1,6 @@
 ---
 
-- hosts: TEST
+- hosts: DOMO
   become: true
   pre_tasks:
 
@@ -11,12 +11,13 @@
     changed_when: false
     when: ansible_distribution == "Debian"
 
-- hosts: TEST
+- hosts: DOMO
   become: true
   roles:
-    - base
-    - secure
+#    - base
+#    - secure
+    - fail2ban
 
 - hosts: TEST
   roles:
-    - basic
+#    - basic

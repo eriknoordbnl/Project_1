@@ -1,0 +1,18 @@
+---
+# templates
+fail2ban_jail_template: "jail.local.j2"
+fail2ban_configuration_template: "fail2ban.local.j2"
+# jail
+fail2ban_ignoreips:
+ - 127.0.0.1/8
+ - 192.168.1.0/24
+fail2ban_bantime: -1
+fail2ban_maxretry: 3
+#fail2ban_findtime: 600
+# configuration
+fail2ban_loglevel: INFO
+fail2ban_logtarget: /var/log/fail2ban.log
+fail2ban_syslog_target: /var/log/fail2ban.log
+fail2ban_syslog_facility: 1
+fail2ban_socket: /var/run/fail2ban/fail2ban.sock
+fail2ban_pidfile: /var/run/fail2ban/fail2ban.pid
